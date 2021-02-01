@@ -5,11 +5,12 @@ namespace TibaltsAnalysis
 {
     class Game
     {
-        private int turns = 1;
-        private Deck deck;
-        private Hand hand;
-        private int lands = 0;
-        private bool goFirst;
+        internal int turns = 1;
+        internal Deck deck;
+        internal Hand hand;
+        internal int lands = 0;
+        internal bool goFirst;
+        internal int mulligans;
 
         public Game(int[] decklist, Random rand)
         {
@@ -23,21 +24,25 @@ namespace TibaltsAnalysis
         public void Play()
         {
             hand.DrawAndMulligan();
+            this.mulligans = this.hand.mulligans;
             lands += hand.PlayFirstTurn(goFirst);
             while (hand.state == Hand.TibState.Incomplete)
             {
                 turns++;
                 lands += hand.PlayTurn(turns, lands);
             }
-            ReportState();
+            //PrintState();
+            this.deck = null;
+            this.hand = null;
         }
 
-        internal void ReportState()
+        internal void PrintState()
         {
             Hand.TibState state = this.hand.state;
             Console.WriteLine("Game over at turn " + this.turns);
             if (goFirst) Console.WriteLine("Player went first");
             else Console.WriteLine("Player went second");
+            Console.WriteLine("Amount of mulligans was " + this.mulligans);
             Console.WriteLine("Tibalt cast state: " + state);
             Console.WriteLine();
 

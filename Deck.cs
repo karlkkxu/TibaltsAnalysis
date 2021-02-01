@@ -11,11 +11,34 @@ namespace TibaltsAnalysis
         public Deck(int[] deckList, Random rand)
         {
             this.rand = rand;
+
+            int notPlayset = deckList[2] % 4;
+            int numberOfPlaysets = (deckList[2] - notPlayset) / 4;
+            List<int> cardIDMachine = new List<int>();
+            for (int i = 0; i < numberOfPlaysets; i++)
+            {
+                cardIDMachine.Add(i + 1);
+                cardIDMachine.Add(i + 1);
+                cardIDMachine.Add(i + 1);
+                cardIDMachine.Add(i + 1);
+            }
+            int lastID = cardIDMachine[cardIDMachine.Count - 1];
+            for (int i = 0; i < notPlayset; i++)
+            {
+                cardIDMachine.Add(lastID + 1);
+            }
+
             for (int i = 0; i < deckList.Length; i++)
             {
                 for (int j = 0; j < deckList[i]; j++)
                 {
-                    this.cards.Add(new Card(i));
+                    if (i == 2)
+                    {
+                        this.cards.Add(new Card(i, cardIDMachine[0]));
+                        cardIDMachine.RemoveAt(0);
+                    }
+                    else
+                        this.cards.Add(new Card(i));
                 }
             }
         }
@@ -87,7 +110,7 @@ namespace TibaltsAnalysis
             }
         }
 
-        internal Hand.TibState CastTrickery()
+        internal Hand.TibState CastTrickery(Card trigger)
         {
             for (int i = 0; i < rand.Next(1, 4); i++)
             {
@@ -96,14 +119,9 @@ namespace TibaltsAnalysis
 
             foreach (Card c in this.cards)
             {
-                //TODO tämä vittu
                 if (c.GetRole() != Card.CardType.Land && c.GetRole() != Card.CardType.ScryLand)
                 {
-                    if (c.GetRole() == Card.CardType.Trigger)
-                    {
-                        if (rand.Next(1, 8) < 5) return Hand.TibState.Failed;
-                    }
-                    if (c.GetRole() == Card.CardType.Tibalt) return Hand.TibState.Failed;
+                    if (c.GetID() == trigger.GetID() || c.GetRole() == Card.CardType.Tibalt) return Hand.TibState.Failed;
                     if (c.GetRole() == Card.CardType.Bomb) return Hand.TibState.Success;
                 }
             }

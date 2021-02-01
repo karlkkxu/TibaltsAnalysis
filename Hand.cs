@@ -9,6 +9,7 @@ namespace TibaltsAnalysis
         private List<Card> cards = new List<Card>();
         private Deck deck;
         private int[] sums;
+        internal int mulligans = 7;
         
         internal enum TibState
         {
@@ -33,6 +34,7 @@ namespace TibaltsAnalysis
                 if (HandIsGood() == true)
                 {
                     ChooseCards(timesMulliganed);
+                    this.mulligans = timesMulliganed;
                     break;
                 }
                 else
@@ -105,7 +107,7 @@ namespace TibaltsAnalysis
                         {
                             if (Tibalt.GetRole() == Card.CardType.Tibalt)
                             {
-                                this.state = this.deck.CastTrickery();
+                                this.state = this.deck.CastTrickery(trigger);
                             }
                         }
                     }
@@ -239,6 +241,7 @@ namespace TibaltsAnalysis
             Console.WriteLine();
             Console.WriteLine();
         }
+
 
     }
 }
